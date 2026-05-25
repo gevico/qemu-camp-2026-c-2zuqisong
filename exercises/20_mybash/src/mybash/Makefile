@@ -9,7 +9,11 @@ TARGET := mybash
 BINDIR ?= ./bin
 # 中间文件目录（比如 ./obj/src/mybash/）
 OBJDIR ?= ./obj
-LINKLIBS ?= -L../../obj/mysed -L../../obj/mywc -L../../obj/mytrans -L../../obj/myfile
+
+# 库搜索路径从 OBJDIR 推导，兼容绝对/相对路径
+LIBDIR := $(abspath $(OBJDIR)/..)
+
+LINKLIBS ?= -L$(LIBDIR)/mysed -L$(LIBDIR)/mywc -L$(LIBDIR)/mytrans -L$(LIBDIR)/myfile
 
 # 源文件
 SRCS := main.c
