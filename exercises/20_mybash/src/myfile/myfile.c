@@ -36,10 +36,18 @@ int __cmd_myfile(const char* filename) {
 
     strcpy(filepath, filename);
     fflush(stdout);
-    printf("filepath: %s\n", filepath);
 
-    // TODO: 在这里添加你的代码
-    // I AM NOT DONE
+    fd = open(filepath, O_RDONLY);
+    if (fd < 0) {
+      perror("myfile");
+      return 1;
+    }
+
+    if (read(fd, &ehdr, sizeof(ehdr)) != sizeof(ehdr)) {
+      perror("myfile");
+      close(fd);
+      return 1;
+    }
 
     print_elf_type(ehdr.e_type);
     close(fd);

@@ -12,9 +12,32 @@ int parse_replace_command(const char* cmd, char** old_str, char** new_str) {
     // 初始化输出参数
     *old_str = NULL;
     *new_str = NULL;
-    
-    // TODO: 在这里添加你的代码
-    // I AM NOT DONE
+
+    // 格式: s/old/new/
+    if (cmd[0] != 's')
+      return -1;
+
+    const char *p = cmd + 1;
+    if (*p != '/')
+      return -1;
+    p++; // 跳过第一个 '/'
+
+    // 提取 old_str
+    const char *old_start = p;
+    while (*p && *p != '/')
+      p++;
+    if (*p != '/')
+      return -1;
+    size_t old_len = p - old_start;
+    *old_str = strndup(old_start, old_len);
+    p++; // 跳过第二个 '/'
+
+    // 提取 new_str
+    const char *new_start = p;
+    while (*p && *p != '/')
+      p++;
+    size_t new_len = p - new_start;
+    *new_str = strndup(new_start, new_len);
 
     return 0;
 }
@@ -24,9 +47,24 @@ void replace_first_occurrence(char* str, const char* old, const char* new) {
     if (!str || !old || !new) {
         return;
     }
-    
-    // TODO: 在这里添加你的代码
-    // I AM NOT DONE
+
+    char *pos = strstr(str, old);
+    if (!pos)
+      return;
+
+    char result[MAX_LINE_LENGTH];
+    size_t prefix_len = pos - str;
+    size_t old_len = strlen(old);
+
+    // 复制前缀部分
+    memcpy(result, str, prefix_len);
+    // 复制新的字符串
+    size_t new_len = strlen(new);
+    memcpy(result + prefix_len, new, new_len);
+    // 复制剩余部分（old之后的内容）
+    strcpy(result + prefix_len + new_len, pos + old_len);
+    // 复制回原字符串
+    strcpy(str, result);
 }
 
 int __cmd_mysed(const char* rules, const char* str) {

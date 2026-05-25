@@ -58,8 +58,15 @@ int is_builtin_command(char **args) {
   if (args[0] == NULL)
     return 0;
 
-  // TODO: 在这里添加你的代码
-  // I AM NOT DONE
+  if (strcmp(args[0], "cd") == 0) {
+    execute_cd(args);
+    return 1;
+  }
+
+  if (strcmp(args[0], "exit") == 0) {
+    execute_exit();
+    return 1;
+  }
 
   return 0;
 }
@@ -68,7 +75,6 @@ int parse_input(char *input, char **args) {
   int i = 0;
   int in_quotes = 0;
   char *buf = input;
-  char *arg_start = NULL;
   char arg_buf[MAX_INPUT];  // 临时存储当前正在解析的参数
   int arg_buf_idx = 0;
 
@@ -77,8 +83,21 @@ int parse_input(char *input, char **args) {
   while (*buf != '\0' && i < MAX_ARGS - 1) {
       char c = *buf;
 
-        // TODO: 在这里添加你的代码
-        // I AM NOT DONE
+      if (c == '"') {
+        in_quotes = !in_quotes;
+      } else if (c == ' ' && !in_quotes) {
+        // 空格分隔参数（引号外的空格）
+        if (arg_buf_idx > 0) {
+          arg_buf[arg_buf_idx] = '\0';
+          args[i++] = strdup(arg_buf);
+          arg_buf_idx = 0;
+        }
+      } else {
+        // 普通字符，加入当前参数
+        if (arg_buf_idx < MAX_INPUT - 1) {
+          arg_buf[arg_buf_idx++] = c;
+        }
+      }
 
       buf++;
   }
